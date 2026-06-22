@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audiobook Hours Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #4A6FA5;
+      --blue-dark:   #3a5a8f;
+      --blue-light:  #e8eef6;
+      --page-bg:     #E8E6E2;
+      --card-bg:     #FAFAF8;
+      --text:        #2c2c2c;
+      --text-muted:  #6b6b6b;
+      --border:      #d4d1cc;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--page-bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--blue);
+      line-height: 1.15;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.55;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 1.25rem;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    label .hint {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .input-wrap {
+      position: relative;
+      width: 160px;
+    }
+
+    .input-wrap .prefix,
+    .input-wrap .suffix {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .input-wrap .prefix { left: 10px; }
+    .input-wrap .suffix { right: 10px; }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-light);
+    }
+
+    .has-prefix input { padding-left: 22px; }
+    .has-suffix input { padding-right: 28px; }
+
+    /* Result cards */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .result-card {
+      background: var(--blue);
+      border-radius: 10px;
+      padding: 1.5rem;
+      color: #fff;
+    }
+
+    .result-card h2 {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.6rem;
+    }
+
+    .result-card .big-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .result-card .unit {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      margin-top: 0.3rem;
+    }
+
+    /* Reality check card */
+    .reality-card {
+      background: var(--blue-dark);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.25rem;
+      color: #fff;
+    }
+
+    .reality-card h2 {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.75rem;
+    }
+
+    .reality-card .reality-line {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: #fff;
+    }
+
+    .reality-card .reality-line span {
+      font-weight: 600;
+    }
+
+    .reality-card .logic {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .reality-card .logic span {
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+
+    .production-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 520px) {
+      header h1 { font-size: 1.7rem; }
+      .card, .result-card, .reality-card { padding: 1.25rem; }
+      .field { grid-template-columns: 1fr; gap: 0.4rem; }
+      .input-wrap { width: 100%; }
+      .results-grid { grid-template-columns: 1fr; }
+      .result-card .big-num { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <h1>How many hours will that take?</h1>
+    <p>Audiobook narration is priced per finished hour — but a finished hour takes more than an hour to make. Enter your numbers to see what hitting your income goal actually requires.</p>
+  </header>
+
+  <div class="card">
+    <h2>Income Goal</h2>
+
+    <div class="field">
+      <label for="annualTarget">
+        Annual income target (gross)
+      </label>
+      <div class="input-wrap has-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="annualTarget" value="100000" min="0" step="5000" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="workWeeks">
+        Working weeks per year
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="workWeeks" value="50" min="1" max="52" step="1" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Production</h2>
+
+    <div class="field">
+      <label for="pfhRate">
+        Rate per finished hour
+        <span class="hint">What you charge (or expect to charge) per finished hour of audio</span>
+      </label>
+      <div class="input-wrap has-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="pfhRate" value="250" min="1" step="25" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="multiplier">
+        Additional hours per finished hour
+        <span class="hint">Recording, editing, re-takes, proofing. Beginners: 2–3. Experienced: 1.5–2.</span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="multiplier" value="2" min="0.5" max="10" step="0.5" />
+      </div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <h2>Finished hours / week</h2>
+      <div class="big-num" id="finishedHrs">—</div>
+      <div class="unit">finished hours needed</div>
+    </div>
+    <div class="result-card">
+      <h2>Working hours / week</h2>
+      <div class="big-num" id="workingHrs">—</div>
+      <div class="unit">total production hours</div>
+    </div>
+  </div>
+
+  <div class="reality-card">
+    <h2>Reality Check</h2>
+    <div class="reality-line" id="realityLine">—</div>
+    <div class="logic" id="logicLine"></div>
+  </div>
+
+  <p class="production-note">Production time only — auditions, admin, and marketing are on top of this.</p>
+
+  <footer>
+    Built by <a href="https://janicewhitson.github.io/voiceofdata" target="_blank">Janice Whitson</a>
+  </footer>
+
+</div>
+
+<script>
+  const ids = ['annualTarget','workWeeks','pfhRate','multiplier'];
+  ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+
+  function fmt(n, decimals = 1) {
+    return n.toLocaleString('en-CA', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  function calculate() {
+    const annual     = parseFloat(document.getElementById('annualTarget').value) || 0;
+    const weeks      = parseFloat(document.getElementById('workWeeks').value)    || 0;
+    const rate       = parseFloat(document.getElementById('pfhRate').value)      || 0;
+    const multiplier = parseFloat(document.getElementById('multiplier').value)   || 0;
+
+    const finishedEl = document.getElementById('finishedHrs');
+    const workingEl  = document.getElementById('workingHrs');
+    const realityEl  = document.getElementById('realityLine');
+    const logicEl    = document.getElementById('logicLine');
+
+    if (weeks <= 0 || rate <= 0 || multiplier <= 0) {
+      finishedEl.textContent = '—';
+      workingEl.textContent  = '—';
+      realityEl.textContent  = '—';
+      logicEl.textContent    = '';
+      return;
+    }
+
+    const weeklyTarget   = annual / weeks;
+    const finishedPerWk  = weeklyTarget / rate;
+    const totalHrsPerWk  = finishedPerWk * (1 + multiplier);
+    const hrsPerDay      = totalHrsPerWk / 5;
+
+    finishedEl.textContent = fmt(finishedPerWk);
+    workingEl.textContent  = fmt(totalHrsPerWk);
+
+    realityEl.innerHTML =
+      `To hit <span>$${fmt(annual, 0)}</span> gross, you need roughly <span>${fmt(totalHrsPerWk)} production hours a week</span> — about <span>${fmt(hrsPerDay)} hours a day</span> across a 5-day week.`;
+
+    logicEl.innerHTML =
+      `Weekly target <span>$${fmt(weeklyTarget, 2)}</span> &divide; <span>$${fmt(rate, 2)}/PFH</span> = <span>${fmt(finishedPerWk)} finished hrs</span> &times; <span>${fmt(1 + multiplier, 1)}x multiplier</span> = <span>${fmt(totalHrsPerWk)} worked hrs</span>`;
+  }
+
+  calculate();
+</script>
+</body>
+</html>
