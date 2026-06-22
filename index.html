@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculators</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #4A6FA5;
+      --blue-light: #e8eef6;
+      --page-bg:    #E8E6E2;
+      --card-bg:    #FAFAF8;
+      --text:       #2c2c2c;
+      --text-muted: #6b6b6b;
+      --border:     #d4d1cc;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--page-bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--blue);
+      line-height: 1.15;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .calc-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .calc-card:hover {
+      border-color: var(--blue);
+      box-shadow: 0 2px 12px rgba(74, 111, 165, 0.12);
+    }
+
+    .calc-card .tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    .calc-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .calc-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .calc-card .arrow {
+      font-size: 0.82rem;
+      color: var(--blue);
+      margin-top: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      padding-bottom: 1rem;
+    }
+
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 520px) {
+      header h1 { font-size: 1.7rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <h1>Calculators</h1>
+    <p>Free tools for freelancers. No sign-up, no data collected — everything runs in your browser.</p>
+  </header>
+
+  <div class="grid">
+
+    <a class="calc-card" href="https://janicewhitson.github.io/calculators/freelance-rate/">
+      <span class="tag">Freelance</span>
+      <h2>What should you charge?</h2>
+      <p>Work backwards from your income target to find your minimum hourly rate — accounting for taxes, expenses, and the hours you actually get paid for.</p>
+      <span class="arrow">Open calculator →</span>
+    </a>
+
+    <a class="calc-card" href="https://janicewhitson.github.io/calculators/audiobook-hours/">
+      <span class="tag">Audiobook Narration</span>
+      <h2>How many hours will that take?</h2>
+      <p>Audiobook work is priced per finished hour — but finished hours take more than an hour to make. See what hitting your annual goal actually requires.</p>
+      <span class="arrow">Open calculator →</span>
+    </a>
+
+  </div>
+
+  <footer>
+    Built by <a href="https://janicewhitson.github.io/calculators">Janice Whitson</a>
+  </footer>
+
+</div>
+</body>
+</html>
