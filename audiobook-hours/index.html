@@ -19,6 +19,8 @@
       --border:      #d4d1cc;
     }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--page-bg);
@@ -135,7 +137,7 @@
     .has-prefix input { padding-left: 22px; }
     .has-suffix input { padding-right: 28px; }
 
-    /* Result cards */
+    /* Primary results */
     .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -167,13 +169,26 @@
     }
 
     .result-card .unit {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.65);
-      margin-top: 0.3rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.35rem;
     }
 
-    /* Reality check card */
+    .result-card .sub {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .result-card .sub span {
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+
+    /* Reality check */
     .reality-card {
       background: var(--blue-dark);
       border-radius: 10px;
@@ -192,8 +207,8 @@
     }
 
     .reality-card .reality-line {
-      font-size: 1.05rem;
-      line-height: 1.55;
+      font-size: 1rem;
+      line-height: 1.6;
       color: #fff;
     }
 
@@ -203,15 +218,15 @@
 
     .reality-card .logic {
       margin-top: 0.75rem;
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
       border-top: 1px solid rgba(255,255,255,0.15);
       padding-top: 0.75rem;
       line-height: 1.6;
     }
 
     .reality-card .logic span {
-      color: rgba(255,255,255,0.9);
+      color: rgba(255,255,255,0.88);
       font-weight: 500;
     }
 
@@ -252,28 +267,17 @@
 
   <header>
     <h1>How many hours will that take?</h1>
-    <p>Audiobook narration is priced per finished hour — but a finished hour takes more than an hour to make. Enter your numbers to see what hitting your income goal actually requires.</p>
+    <p>Audiobook narration is priced per finished hour — but a finished hour takes more than an hour to produce. Enter your numbers to see what hitting your income goal actually requires.</p>
   </header>
 
   <div class="card">
-    <h2>Income Goal</h2>
+    <h2>Goal</h2>
 
     <div class="field">
-      <label for="annualTarget">
-        Annual income target (gross)
-      </label>
+      <label for="annualTarget">Annual income target (gross)</label>
       <div class="input-wrap has-prefix">
         <span class="prefix">$</span>
         <input type="number" id="annualTarget" value="100000" min="0" step="5000" />
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="workWeeks">
-        Working weeks per year
-      </label>
-      <div class="input-wrap">
-        <input type="number" id="workWeeks" value="50" min="1" max="52" step="1" />
       </div>
     </div>
   </div>
@@ -288,44 +292,65 @@
       </label>
       <div class="input-wrap has-prefix">
         <span class="prefix">$</span>
-        <input type="number" id="pfhRate" value="250" min="1" step="25" />
+        <input type="number" id="pfhRate" value="200" min="1" step="25" />
       </div>
     </div>
 
     <div class="field">
       <label for="multiplier">
-        Additional time per finished hour
-        <span class="hint">Recording, editing, re-takes, proofing, etc.</span>
+        Additional hours per finished hour
+        <span class="hint">Recording, editing, re-takes, proofing. Beginners: 2–3. Experienced: 1.5–2.</span>
       </label>
       <div class="input-wrap">
         <input type="number" id="multiplier" value="2" min="0.5" max="10" step="0.5" />
       </div>
     </div>
+
+    <div class="field">
+      <label for="workWeeks">
+        Working weeks per year
+        <span class="hint">Defaults to 50 — adjust if you plan to take more time off</span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="workWeeks" value="50" min="1" max="52" step="1" />
+      </div>
+    </div>
   </div>
 
+  <!-- Primary outputs -->
   <div class="results-grid">
     <div class="result-card">
-      <h2>Finished hours / week</h2>
-      <div class="big-num" id="finishedHrs">—</div>
-      <div class="unit">finished hours needed</div>
+      <h2>Finished Hours / Year</h2>
+      <div class="big-num" id="annualFinished">--</div>
+      <div class="unit">finished hours</div>
+      <div class="sub" id="weeklyFinishedNote"></div>
     </div>
     <div class="result-card">
-      <h2>Working hours / week</h2>
-      <div class="big-num" id="workingHrs">—</div>
-      <div class="unit">total production hours</div>
+      <h2>Production Hours / Year</h2>
+      <div class="big-num" id="annualProduction">--</div>
+      <div class="unit">additional production hours</div>
+      <div class="sub" id="weeklyProductionNote"></div>
     </div>
   </div>
 
+  <!-- Total worked -->
+  <div class="reality-card" style="margin-bottom:1.25rem;">
+    <h2>Total Working Hours / Year</h2>
+    <div class="reality-line" id="totalWorkedLine">--</div>
+    <div class="logic" id="weeklyTotalNote"></div>
+  </div>
+
+  <!-- Reality check -->
   <div class="reality-card">
     <h2>Reality Check</h2>
-    <div class="reality-line" id="realityLine">—</div>
+    <div class="reality-line" id="realityLine">--</div>
     <div class="logic" id="logicLine"></div>
   </div>
 
-  <p class="production-note">Production time only — auditions, admin, and marketing are on top of this.</p>
+  <p class="production-note">Production time only -- auditions, admin, and marketing are on top of this.</p>
 
   <footer>
-    Built by <a href="https://janicewhitson.github.io/calculators/" target="_blank">Janice Whitson</a>
+    Built by <a href="https://janicewhitson.github.io/calculators">Janice Whitson</a>
   </footer>
 
 </div>
@@ -334,7 +359,8 @@
   const ids = ['annualTarget','workWeeks','pfhRate','multiplier'];
   ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
 
-  function fmt(n, decimals = 1) {
+  function fmt(n, decimals) {
+    decimals = decimals !== undefined ? decimals : 1;
     return n.toLocaleString('en-CA', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   }
 
@@ -344,32 +370,42 @@
     const rate       = parseFloat(document.getElementById('pfhRate').value)      || 0;
     const multiplier = parseFloat(document.getElementById('multiplier').value)   || 0;
 
-    const finishedEl = document.getElementById('finishedHrs');
-    const workingEl  = document.getElementById('workingHrs');
-    const realityEl  = document.getElementById('realityLine');
-    const logicEl    = document.getElementById('logicLine');
-
     if (weeks <= 0 || rate <= 0 || multiplier <= 0) {
-      finishedEl.textContent = '—';
-      workingEl.textContent  = '—';
-      realityEl.textContent  = '—';
-      logicEl.textContent    = '';
+      ['annualFinished','annualProduction','totalWorkedLine','weeklyTotalNote',
+       'realityLine','logicLine','weeklyFinishedNote','weeklyProductionNote']
+        .forEach(id => { document.getElementById(id).textContent = '--'; });
       return;
     }
 
-    const weeklyTarget   = annual / weeks;
-    const finishedPerWk  = weeklyTarget / rate;
-    const totalHrsPerWk  = finishedPerWk * (1 + multiplier);
-    const hrsPerDay      = totalHrsPerWk / 5;
+    const annualFinished   = annual / rate;
+    const annualProduction = annualFinished * multiplier;
+    const annualWorked     = annualFinished + annualProduction;
+    const weeklyFinished   = annualFinished / weeks;
+    const weeklyProduction = annualProduction / weeks;
+    const weeklyWorked     = annualWorked / weeks;
+    const dailyWorked      = weeklyWorked / 5;
+    const effectiveRate    = annual / annualWorked;
 
-    finishedEl.textContent = fmt(finishedPerWk);
-    workingEl.textContent  = fmt(totalHrsPerWk);
+    document.getElementById('annualFinished').textContent   = fmt(annualFinished, 0);
+    document.getElementById('annualProduction').textContent = fmt(annualProduction, 0);
 
-    realityEl.innerHTML =
-      `To hit <span>$${fmt(annual, 0)}</span> gross, you need roughly <span>${fmt(totalHrsPerWk)} production hours a week</span> — about <span>${fmt(hrsPerDay)} hours a day</span> across a 5-day week.`;
+    document.getElementById('weeklyFinishedNote').innerHTML =
+      '<span>' + fmt(weeklyFinished) + '</span> finished hrs/week across ' + weeks + ' weeks';
 
-    logicEl.innerHTML =
-      `Weekly target <span>$${fmt(weeklyTarget, 2)}</span> &divide; <span>$${fmt(rate, 2)}/PFH</span> = <span>${fmt(finishedPerWk)} finished hrs</span> &times; <span>${fmt(1 + multiplier, 1)}x multiplier</span> = <span>${fmt(totalHrsPerWk)} worked hrs</span>`;
+    document.getElementById('weeklyProductionNote').innerHTML =
+      '<span>' + fmt(weeklyProduction) + '</span> production hrs/week (' + fmt(multiplier, 1) + ' hrs per finished hour)';
+
+    document.getElementById('totalWorkedLine').innerHTML =
+      '<span>' + fmt(annualWorked, 0) + ' total hours</span> (' + fmt(annualFinished, 0) + ' finished + ' + fmt(annualProduction, 0) + ' production)';
+
+    document.getElementById('weeklyTotalNote').innerHTML =
+      fmt(weeklyWorked) + ' hrs/week &mdash; approx. ' + fmt(dailyWorked) + ' hrs/day across a 5-day week';
+
+    document.getElementById('realityLine').innerHTML =
+      'To hit <span>$' + fmt(annual, 0) + '</span> gross, you need <span>' + fmt(annualFinished, 0) + ' finished hours</span>. With <span>' + fmt(multiplier, 1) + ' additional production hours</span> per finished hour, your effective hourly rate is <span>$' + fmt(effectiveRate, 2) + '/hr</span>.';
+
+    document.getElementById('logicLine').innerHTML =
+      '$' + fmt(annual, 0) + ' &divide; $' + fmt(rate, 2) + '/PFH = ' + fmt(annualFinished, 0) + ' finished hrs &times; ' + fmt(multiplier, 1) + 'x = ' + fmt(annualProduction, 0) + ' production hrs &mdash; ' + fmt(annualFinished, 0) + ' + ' + fmt(annualProduction, 0) + ' = <span>' + fmt(annualWorked, 0) + ' total hrs worked</span>';
   }
 
   calculate();
